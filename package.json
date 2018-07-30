@@ -23,5 +23,8 @@
     "mocha": "^5.2.0",
     "selenium-webdriver": "^3.6.0",
     "cookie-parser": "^1.4.3"
+  },
+  "dependencies": {
+    "ws": "^6.0.0"
   }
 }

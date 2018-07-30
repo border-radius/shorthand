@@ -3,10 +3,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const webdriver = require('selenium-webdriver');
+const WebSocket = require('ws');
 const ways = require('../ways');
 
 const app = express();
 const server = app.listen(5949);
+
+const wss = new WebSocket.Server({ port: 8080 });
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -31,7 +34,29 @@ function frontend (type, url) {
     }
 }
 
+function frontendWS (type, url) {
+    return (req, res) => {
+        res.send([
+            '<head></head><body><script>(',
+            [
+                ')("',
+                'ws://localhost:8080',
+                '", "input").then(data => window.location = "',
+                url,
+                '_done?i=" + data)</script></body>'
+            ].join('')
+        ].join(ways[type].request.toString()));
+    }
+}
+
 function backend (type) {
+    return ways[type].response(input => {
+        assert.equal(input, 'input');
+        return new Promise(resolve => resolve('output'));
+    });
+}
+
+function backendWS (type) {
     return ways[type].response(input => {
         assert.equal(input, 'input');
         return new Promise(resolve => resolve('output'));
@@ -75,7 +100,15 @@ describe('Request', () => {
         driver.get('http://localhost:5949/subdocument');
     });
 
+    it('should work through WEBSOCKET', done => {
+        app.get('/websocket', frontendWS('websocket', '/websocket'));
+        app.get('/websocket_done', check(done));
+        wss.on('connection', backendWS('websocket'));
+        driver.get('http://localhost:5949/websocket');
+    });
+
     after(() => {
+        wss.close();
         server.close();
         return driver.quit();
     });
