@@ -23,7 +23,7 @@ function request (proxy, data) {
 
 function response (evaluate) {
     return (req, res, next) => {
-        evaluate(req.body).then(data => {
+        evaluate(req.body.data).then(data => {
             res.json({
                 data: data
             });
