@@ -1,6 +1,7 @@
 const assert = require('assert');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const webdriver = require('selenium-webdriver');
 const ways = require('../ways');
 
@@ -8,6 +9,7 @@ const app = express();
 const server = app.listen(5949);
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 const WEBDRIVER_BROWSER = 'chrome';
 const WEBDRIVER_WINDOW_WIDTH = 320;
@@ -64,6 +66,13 @@ describe('Request', () => {
         app.get('/stylesheet_get', backend('stylesheet'));
         app.get('/stylesheet_done', check(done));
         driver.get('http://localhost:5949/stylesheet');
+    });
+
+    it('should work through SUBDOCUMENT', done => {
+        app.get('/subdocument', frontend('subdocument', '/subdocument'));
+        app.get('/subdocument_get', backend('subdocument'));
+        app.get('/subdocument_done', check(done));
+        driver.get('http://localhost:5949/subdocument');
     });
 
     after(() => {
