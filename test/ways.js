@@ -19,11 +19,11 @@ driver.manage().window().setSize(WEBDRIVER_WINDOW_WIDTH, WEBDRIVER_WINDOW_HEIGHT
 function frontend (type, url) {
     return (req, res) => {
         res.send([
-            '<script>(',
+            '<body><script>(',
             [
                 ')("',
                 '_get", "input").then(data => window.location = "',
-                '_done?i=" + data)</script>'
+                '_done?i=" + data)</script></body>'
             ].join(url)
         ].join(ways[type].request.toString()));
     }
@@ -51,6 +51,13 @@ describe('Request', () => {
         app.get('/xhr_done', check(done));
         driver.get('http://localhost:5949/xhr');
     });
+
+    it('should work through SCRIPT', done => {
+        app.get('/script', frontend('script', '/script'));
+        app.get('/script_get', backend('script'));
+        app.get('/script_done', check(done));
+        driver.get('http://localhost:5949/script');
+    })
 
     after(() => {
         server.close();
