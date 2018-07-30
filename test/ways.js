@@ -19,12 +19,12 @@ driver.manage().window().setSize(WEBDRIVER_WINDOW_WIDTH, WEBDRIVER_WINDOW_HEIGHT
 function frontend (type, url) {
     return (req, res) => {
         res.send([
-            '<body><script>(',
+            '<head></head><body><script>(',
             [
                 ')("',
                 '_get", "input").then(data => window.location = "',
                 '_done?i=" + data)</script></body>'
-            ].join(url)
+            ].join('http://localhost:5949' + url)
         ].join(ways[type].request.toString()));
     }
 }
@@ -57,7 +57,14 @@ describe('Request', () => {
         app.get('/script_get', backend('script'));
         app.get('/script_done', check(done));
         driver.get('http://localhost:5949/script');
-    })
+    });
+
+    it('should work through STYLESHEET', done => {
+        app.get('/stylesheet', frontend('stylesheet', '/stylesheet'));
+        app.get('/stylesheet_get', backend('stylesheet'));
+        app.get('/stylesheet_done', check(done));
+        driver.get('http://localhost:5949/stylesheet');
+    });
 
     after(() => {
         server.close();
