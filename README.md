@@ -52,9 +52,9 @@ const wss = new WebSocket.Server({ port: 8080 });
 wss.on('connection', shorthand.websocket.response(request_data => request(request_data)));
 
 app.get('/xhr', shorthand.xhr.response(request_data => request(request_data)));
-app.get('/xhr', shorthand.script.response(request_data => request(request_data)));
-app.get('/xhr', shorthand.stylesheet.response(request_data => request(request_data)));
-app.get('/xhr', shorthand.subdocument.response(request_data => request(request_data)));
+app.get('/script', shorthand.script.response(request_data => request(request_data)));
+app.get('/stylesheet', shorthand.stylesheet.response(request_data => request(request_data)));
+app.get('/subdocument', shorthand.subdocument.response(request_data => request(request_data)));
 ```
 
 #### Test
